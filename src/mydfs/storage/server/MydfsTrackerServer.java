@@ -112,10 +112,25 @@ public class MydfsTrackerServer {
 	//获取数据
 	public InputStream receiveData(String currenturl) {
 		InputStream inputStream = null;
+		Socket socket=null;
 		try {
-			Socket socket = receive(currenturl);
-			inputStream = socket.getInputStream();
+			socket = receive(currenturl);
+			inputStream=socket.getInputStream();
 		} catch (Exception e) {
+			if(socket!=null){
+				try {
+					socket.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+			if(inputStream!=null){
+				try {
+					inputStream.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
 			e.printStackTrace();
 		}
 		return inputStream;
@@ -125,14 +140,20 @@ public class MydfsTrackerServer {
 		Socket socket = null;
 		try {
 			socket = new Socket(host, port);
-			// 得到socket发送数据的输出流
-			OutputStream out = socket.getOutputStream();
-			DataOutputStream ps = new DataOutputStream(out);
-			ps.writeUTF("receive");
-			ps.flush();
-			ps.writeUTF(currenturl);
-			ps.flush();
+			OutputStream outputStream = socket.getOutputStream();
+			DataOutputStream dataOutputStream=new DataOutputStream(outputStream);
+			dataOutputStream.writeUTF("receive");
+			dataOutputStream.flush();
+			dataOutputStream.writeUTF(currenturl);
+			dataOutputStream.flush();
 		} catch (Exception ex) {
+			try {
+				if(socket!=null){
+					socket.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			ex.printStackTrace();
 		}
 		return socket;

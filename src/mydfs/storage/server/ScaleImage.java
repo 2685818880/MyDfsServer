@@ -31,7 +31,7 @@ public class ScaleImage {
     }
     // fromFileStr原图片地址,saveToFileStr生成缩略图地址,formatWideth生成图片宽度,formatHeight高度
     public void thumbnail(String fromFileStr, String saveToFileStr,
-            int formatWideth, int formatHeight,String format) throws Exception {
+            int width, int height,String format) throws Exception {
         BufferedImage srcImage;
         File saveFile = new File(saveToFileStr);
         File fromFile = new File(fromFileStr);
@@ -42,18 +42,18 @@ public class ScaleImage {
         int changeToHeight = 0;
         if (imageWideth > 0 && imageHeight > 0) {
             // flag=true;
-            if (imageWideth / imageHeight >= formatWideth / formatHeight) {
-                if (imageWideth > formatWideth) {
-                    changeToWideth = formatWideth;
-                    changeToHeight = (imageHeight * formatWideth) / imageWideth;
+            if (imageWideth / imageHeight >= width / height) {
+                if (imageWideth > width) {
+                    changeToWideth = width;
+                    changeToHeight = (imageHeight * width) / imageWideth;
                 } else {
                     changeToWideth = imageWideth;
                     changeToHeight = imageHeight;
                 }
             } else {
-                if (imageHeight > formatHeight) {
-                    changeToHeight = formatHeight;
-                    changeToWideth = (imageWideth * formatHeight) / imageHeight;
+                if (imageHeight > height) {
+                    changeToHeight = height;
+                    changeToWideth = (imageWideth * height) / imageHeight;
                 } else {
                     changeToWideth = imageWideth;
                     changeToHeight = imageHeight;

@@ -13,6 +13,8 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -106,14 +108,17 @@ public class MydfsStorageServer {
 		Folder.initFolder(basepath);
 		
 		executorService = Executors.newFixedThreadPool(workers);
-		System.out.print("Storage Server start!");
+		
 		new Thread(new Runnable() {
-
+			
 			@Override
 			public void run() {
+				Date date=new Date();
+				String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
 				while (true) {
+					if(stop){break;}
 					try {
-						if(stop)break;
+						System.out.println("start up time:"+currentTime+" Storage Server start!");
 						final Socket socket = serverSocket.accept();
 						//保存客户端上传的文件,并返回文件存储的路径给客户端
 						// 每次接受一个客户端连接都执行一个线程
@@ -138,12 +143,8 @@ public class MydfsStorageServer {
 										Matcher parameter = Pattern.compile(parameterPattern).matcher(url);
 										File file=null;
 										OutputStream outputStream = socket.getOutputStream();
-										if(parameterless.find()){
-											String storepath=basepath+parameterless.group();
-											System.out.println("storepath:"+storepath);
-											file = FileToolkit.diggingFile(storepath);
 										// 客户端根据参数获取对应的缩略图片
-										}else if(parameter.find()){
+										if(parameter.find()){
 											String storepath_parameter = basepath+ parameter.group();
 											System.out.println("storepath:"+ storepath_parameter);
 											String heigth = FileToolkit.getHeigth(storepath_parameter);
@@ -165,12 +166,18 @@ public class MydfsStorageServer {
 															Integer.valueOf(heigth),
 															FileToolkit.getExtensionName(storepath));
 													file = new File(thumbnailPath);
+													System.out.println("thumbnailPath:"+thumbnailPath);
 												// 文件不存在返回默认的图片
 												}else {
 													file=FileToolkit.diggingFile(basepath+"the-file-is-not-exist.jpg");
 												}
 											}
 											
+										// 客户端获取原图
+										}else if(parameterless.find()){
+											String storepath=basepath+parameterless.group();
+											System.out.println("storepath:"+storepath);
+											file = FileToolkit.diggingFile(storepath);
 										// 如果所有正则都不匹配返回一张默认的图片
 										}else {
 											file=FileToolkit.diggingFile(basepath+"the-file-is-not-exist.jpg");
@@ -209,7 +216,14 @@ public class MydfsStorageServer {
 										}
 										storepath = storepath + "."+extension ;
 										/**Begin Author:wuqiwei Date:2014-08-15  AddReason:解决windows不能重名名*/
-										FileToolkit.reName(file,new File(storepath));
+										String os = System.getProperty("os.name");
+										/**Begin Author:wuqiqwi Date:2014-09-05 AddReason:windows 文件重命名无效,linux有效*/
+										if(os.contains("Windows")){
+											FileToolkit.reName(file,new File(storepath));
+										}else {
+											file.renameTo(new File(storepath));
+										}	
+										/**End Author:wuqiqwi Date:2014-09-05 AddReason:windows 文件重命名无效,linux有效*/
 										/**End Author:wuqiwei Date:2014-08-15  AddReason:解决windows不能重名名*/
 										storepath=storepath.replaceAll(basepath, pathPrefix);
 										System.out.println("access path:"+storepath);
@@ -263,7 +277,7 @@ public class MydfsStorageServer {
 					}
 				}
 			}
-		}).start();
+		}).start();	
 
 	}
 
