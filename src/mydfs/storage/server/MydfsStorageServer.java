@@ -151,28 +151,33 @@ public class MydfsStorageServer {
 											String width = FileToolkit.getWidth(storepath_parameter);
 											// 获取缩略图路径
 											String thumbnailPath = FileToolkit.thumbnailPath(storepath_parameter,width, heigth);
-											file = new File(thumbnailPath);
-											// 如果没有缩率图文件,
-											if (!file.exists()) {
-												String storepath=storepath_parameter.replaceAll("\\?w=[0-9]+&h=[0-9]+", "");
-												file=new File(storepath);
-												// 如果原文件存在,生成缩略图
-												if(file.exists()){
-													ScaleImage scaleImage = new ScaleImage();
-													scaleImage.thumbnail(
-															storepath,
-															thumbnailPath,
-															Integer.valueOf(width),
-															Integer.valueOf(heigth),
-															FileToolkit.getExtensionName(storepath));
-													file = new File(thumbnailPath);
-													System.out.println("thumbnailPath:"+thumbnailPath);
-												// 文件不存在返回默认的图片
-												}else {
-													file=FileToolkit.diggingFile(basepath+"the-file-is-not-exist.jpg");
+											// 判断该文件是否可以被压缩(只有图片可以被压缩生成缩略图)
+											if(FileToolkit.isCanThumbnail(thumbnailPath)){
+												// 如果这个缩略图不是图片格式
+												file = new File(thumbnailPath);
+												// 如果没有缩率图文件,
+												if (!file.exists()) {
+													String storepath=storepath_parameter.replaceAll("\\?w=[0-9]+&h=[0-9]+", "");
+													file=new File(storepath);
+													// 如果原文件存在,生成缩略图
+													if(file.exists()){
+														ScaleImage scaleImage = new ScaleImage();
+														scaleImage.thumbnail(
+																storepath,
+																thumbnailPath,
+																Integer.valueOf(width),
+																Integer.valueOf(heigth),
+																FileToolkit.getExtensionName(storepath));
+														file = new File(thumbnailPath);
+														System.out.println("thumbnailPath:"+thumbnailPath);
+													// 文件不存在返回默认的图片
+													}else {
+														file=FileToolkit.diggingFile(basepath+"the-file-is-not-exist.jpg");
+													}
 												}
+											}else {
+												file=FileToolkit.diggingFile(basepath+"the-file-is-not-exist.jpg");
 											}
-											
 										// 客户端获取原图
 										}else if(parameterless.find()){
 											String storepath=basepath+parameterless.group();

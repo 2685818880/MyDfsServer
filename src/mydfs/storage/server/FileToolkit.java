@@ -142,12 +142,26 @@ public class FileToolkit {
 		}
 		return file;
 	}
-
+	// 判断该是否该文件是否是图片文件
+	public static boolean isCanThumbnail(String url){
+		String extension = getExtensionName(url);
+		boolean can=false;
+		if(extension.equalsIgnoreCase("jpg"))
+			can=true;
+		else if(extension.equalsIgnoreCase("bmp")){
+			can=true;
+		}else if (extension.equalsIgnoreCase("png")) {
+			can=true;
+		}else if (extension.equalsIgnoreCase("jpeg")) {
+			can=true;
+		}else if (extension.equalsIgnoreCase("gif")) {
+			can=true;
+		}
+		return can;
+	} 
 	// /98/00/A403-7FF4-4980-93A1-2B20C68CB59A-h100xw100.jpg
 	public static void main(String[] args) {
-		/*String storepath = "/98/00/A403-7FF4-4980-93A1-2B20C68CB59A.jpg";
-		System.out.println(thumbnailPath(storepath, "100", "100"));*/
-		URL classPath = MydfsStorageServer.class.getResource("");
-		System.out.println(classPath);
+		String extensionName = getExtensionName("xxxx.jpg");
+		System.out.println(extensionName);
 	}
 }
