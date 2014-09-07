@@ -1,25 +1,17 @@
 package mydfs.storage.server;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author wuqiwei
@@ -134,131 +126,17 @@ public class MydfsStorageServer {
 									if(status.equals("receive")){
 										// 读取到请求的url
 										String url = datais.readUTF();
-										System.out.println("access url:"+url);
-										// 无参数的url正则表达式
-										String parameterlessPattern="/[A-Z0-9]{2}/[A-Z0-9]{2}/[A-Za-z0-9-]+\\.[a-zA-Z]+";
-										Matcher parameterless = Pattern.compile(parameterlessPattern).matcher(url);
-										// 有参数的url正则表达式
-										String parameterPattern="/[A-Z0-9]{2}/[A-Z0-9]{2}/[A-Za-z0-9-]+\\.[a-zA-Z]+(\\?w=[0-9]+&h=[0-9]+){0,1}";
-										Matcher parameter = Pattern.compile(parameterPattern).matcher(url);
-										File file=null;
-										OutputStream outputStream = socket.getOutputStream();
-										// 客户端根据参数获取对应的缩略图片
-										if(parameter.find()){
-											String storepath_parameter = basepath+ parameter.group();
-											System.out.println("storepath:"+ storepath_parameter);
-											String heigth = FileToolkit.getHeigth(storepath_parameter);
-											String width = FileToolkit.getWidth(storepath_parameter);
-											// 获取缩略图路径
-											String thumbnailPath = FileToolkit.thumbnailPath(storepath_parameter,width, heigth);
-											// 判断该文件是否可以被压缩(只有图片可以被压缩生成缩略图)
-											if(FileToolkit.isCanThumbnail(thumbnailPath)){
-												// 如果这个缩略图不是图片格式
-												file = new File(thumbnailPath);
-												// 如果没有缩率图文件,
-												if (!file.exists()) {
-													String storepath=storepath_parameter.replaceAll("\\?w=[0-9]+&h=[0-9]+", "");
-													file=new File(storepath);
-													// 如果原文件存在,生成缩略图
-													if(file.exists()){
-														ScaleImage scaleImage = new ScaleImage();
-														scaleImage.thumbnail(
-																storepath,
-																thumbnailPath,
-																Integer.valueOf(width),
-																Integer.valueOf(heigth),
-																FileToolkit.getExtensionName(storepath));
-														file = new File(thumbnailPath);
-														System.out.println("thumbnailPath:"+thumbnailPath);
-													// 文件不存在返回默认的图片
-													}else {
-														file=FileToolkit.diggingFile(basepath+"the-file-is-not-exist.jpg");
-													}
-												}
-											}else {
-												file=FileToolkit.diggingFile(basepath+"the-file-is-not-exist.jpg");
-											}
-										// 客户端获取原图
-										}else if(parameterless.find()){
-											String storepath=basepath+parameterless.group();
-											System.out.println("storepath:"+storepath);
-											file = FileToolkit.diggingFile(storepath);
-										// 如果所有正则都不匹配返回一张默认的图片
-										}else {
-											file=FileToolkit.diggingFile(basepath+"the-file-is-not-exist.jpg");
-										}
-										FileToolkit.flushImage(url, outputStream, file);
+										CoreServer.sendToClient(socket, url,basepath);
 									}
 									// 文件上传
 									else if(status.equals("upload")){
 										// 获取文件后缀名
 										String extension=datais.readUTF();
-										System.out.println("client file stuffix: "+extension);
-										String uuid = UUID.randomUUID().toString().toUpperCase();
-										// 得到存储路径
-										String storepath = Folder.getStoragePath(uuid);
-										// 文件存储路径
-										File file = new File(storepath);
-										OutputStream out = new FileOutputStream(file);
-										BufferedOutputStream bos = new BufferedOutputStream(out);
-										// 获取文件流的大小
-										int size = datais.readInt();
-										System.out.println("server file size:" + size);
-										// InputStreamReader将字节流转化为字符流
-										BufferedInputStream br = new BufferedInputStream(in);
-										// 读取客户端数据
-										int len = 0;
-										byte[] buf = new byte[1024];
-										//客户端不关闭,br.read(buf);会一直等待,所以必须
-										//手动判断退出循环
-										System.out.println("virtual times:"+(float)size/(float)buf.length);
-										double times=Math.ceil((float)size / (float)buf.length);
-										System.out.println("read times:"+times);
-										for (int i = 0; i < times; i++) {
-											len = br.read(buf);
-											bos.write(buf, 0, len);
-											bos.flush();
-										}
-										storepath = storepath + "."+extension ;
-										/**Begin Author:wuqiwei Date:2014-08-15  AddReason:解决windows不能重名名*/
-										String os = System.getProperty("os.name");
-										/**Begin Author:wuqiqwi Date:2014-09-05 AddReason:windows 文件重命名无效,linux有效*/
-										if(os.contains("Windows")){
-											FileToolkit.reName(file,new File(storepath));
-										}else {
-											file.renameTo(new File(storepath));
-										}	
-										/**End Author:wuqiqwi Date:2014-09-05 AddReason:windows 文件重命名无效,linux有效*/
-										/**End Author:wuqiwei Date:2014-08-15  AddReason:解决windows不能重名名*/
-										storepath=storepath.replaceAll(basepath, pathPrefix);
-										System.out.println("access path:"+storepath);
-										out = socket.getOutputStream();
-										DataOutputStream socketOut=new DataOutputStream(out);
-										socketOut.writeUTF(storepath);
-										bos.flush();
-										bos.close();
-										br.close();
-										socketOut.close();
-										out.close();
+										CoreServer.clientUpload(socket, in, datais,extension,basepath,pathPrefix);
 									}
 									// 删除StoreServer中的数据
 									else if(status.equals("remove")){
-										boolean success=false;
-										OutputStream out = socket.getOutputStream();
-										DataOutputStream dataos = new DataOutputStream(out);
-										// 读取到请求的url
-										String url = datais.readUTF();
-										Pattern regex = Pattern.compile("/[A-Z0-9]{2}/[A-Z0-9]{2}/[A-Za-z0-9-]+\\.[a-z]+");
-										Matcher matcher = regex.matcher(url);
-										if(matcher.find()){
-											String storepath=basepath+matcher.group();
-											System.out.println("file disk store path:"+storepath);
-											File file=new File(storepath);
-											if(file.exists())success= file.delete();
-										}
-										dataos.writeBoolean(success);
-										dataos.flush();
-										dataos.close();
+										CoreServer.clientRemove(socket, datais,basepath);
 									}
 									
 								} catch (IOException e) {
@@ -267,12 +145,20 @@ public class MydfsStorageServer {
 									e.printStackTrace();
 								}finally{
 									try {
-										socket.close();
+										if (socket != null&& !socket.isClosed()) {
+											socket.close();
+										}
 									} catch (IOException e) {
 										e.printStackTrace();
 									}
 								}
 							}
+
+							
+
+						
+
+							
 
 							
 						
@@ -298,5 +184,11 @@ public class MydfsStorageServer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	public static void main(String[] args) {
+		String url="D:/data/mydfs/store/15/54/4446-332C-403B-A8CB-ED8ED6391EDC.jpg";
+		File file=new File(url);
+		String url2="D:/data/mydfs/store/15/54/4446-332C-403B-A8CB-ED8ED6391EDC.png";
+		file.renameTo(new File(url2));
 	}
 }

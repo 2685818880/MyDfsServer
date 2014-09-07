@@ -24,7 +24,12 @@ public class MydfsHttpClient extends HttpServlet{
 			throws ServletException, IOException {
 		MydfsTrackerServer storageTracker=(MydfsTrackerServer)context.getBean("mydfsTrackerServer");
 		System.out.println("storageTracker:"+storageTracker.hashCode());
-		String url = req.getRequestURL().toString();
+		System.out.println("getQueryString():"+req.getQueryString());
+		String url=req.getRequestURL().toString();
+		if(req.getQueryString()!=null){
+			 url = url+"?"+req.getQueryString();
+		}
+		System.out.println(url);
 		InputStream inputStream = storageTracker.receiveData(url);
 		BufferedInputStream bis = new BufferedInputStream(inputStream);
 		if(url.contains(".swf"))resp.setContentType("application/x-shockwave-flash");

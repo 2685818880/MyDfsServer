@@ -38,6 +38,12 @@ public class ScaleImage {
         srcImage = javax.imageio.ImageIO.read(fromFile); // construct image
         int imageWideth = srcImage.getWidth(null);
         int imageHeight = srcImage.getHeight(null);
+        if(width==0){
+        	width=imageWideth;
+        }
+        if(height==0){
+        	height=imageHeight;
+        }
         int changeToWideth = 0;
         int changeToHeight = 0;
         if (imageWideth > 0 && imageHeight > 0) {
@@ -62,6 +68,7 @@ public class ScaleImage {
         }
         srcImage = imageZoomOut(srcImage, changeToWideth, changeToHeight);
         ImageIO.write(srcImage, format, saveFile);
+        
     }
     public BufferedImage imageZoomOut(BufferedImage srcBufferImage, int w, int h) {
         width = srcBufferImage.getWidth();
