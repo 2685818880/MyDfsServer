@@ -1,7 +1,6 @@
 package mydfs.storage.server;
 
 import java.io.*;
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,15 +54,13 @@ public class FileToolkit {
 		}
 		return filename;
 	}
-	public static void flushImage(String url,OutputStream outputStream,File file)  {
+	public static void flushImage(String url,OutputStream outputStream,InputStream inputStream)  {
 		byte[] buf=new byte[1024];
 		int len=0;
-		InputStream inputStream=null;
 		BufferedInputStream bufferedInputStream=null;
 		BufferedOutputStream bufferedOutputStream=null;
 		try {
 			bufferedOutputStream=new BufferedOutputStream(outputStream);
-			inputStream=new FileInputStream(file);
 			bufferedInputStream=new BufferedInputStream(inputStream);
 			while ((len=bufferedInputStream.read(buf))!=-1) {
 				bufferedOutputStream.write(buf, 0, len);
@@ -106,17 +103,17 @@ public class FileToolkit {
 			}
 		}
 	}
-	public static File diggingFile(String storepath) {
+	public InputStream diggingFile(String storepath) throws Exception {
 		File file=new File(storepath);
 		// 如果文件不存在，指定文件返回一张默认图片
 		if(!file.exists()){
-			URL classPath = MydfsStorageServer.class.getResource("");
-			String unfindImg=(classPath.toString()).replace("file:", "");
-			unfindImg+="404.jpg";
-			System.out.println("current file:"+unfindImg);
-			file=new File(unfindImg);
+			 String packageName=this.getClass().getPackage().getName().replace(".", "/");
+			 // getResourceAsStream方法比getResource好,getResourceAsStream把压缩在jar包中的文件也当放到classpath中
+			 InputStream inputStream=this.getClass().getResourceAsStream("/"+packageName+"/404.jpg");
+			 return inputStream;
 		}
-		return file;
+		return new FileInputStream(file);
+		
 	}
 	// 判断该是否该文件是否是图片文件
 	public static boolean isCanThumbnail(String url){
@@ -138,5 +135,4 @@ public class FileToolkit {
 	public static String removeHost(String url){
 		return url.substring(url.lastIndexOf("/")-6);
 	}
-	
 }

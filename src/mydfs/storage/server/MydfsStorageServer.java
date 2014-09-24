@@ -1,7 +1,6 @@
 package mydfs.storage.server;
 
 import java.io.DataInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
@@ -153,15 +152,6 @@ public class MydfsStorageServer {
 									}
 								}
 							}
-
-							
-
-						
-
-							
-
-							
-						
 						});
 					} catch (IOException e1) {
 						e1.printStackTrace();
@@ -184,11 +174,5 @@ public class MydfsStorageServer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	public static void main(String[] args) {
-		String url="D:/data/mydfs/store/15/54/4446-332C-403B-A8CB-ED8ED6391EDC.jpg";
-		File file=new File(url);
-		String url2="D:/data/mydfs/store/15/54/4446-332C-403B-A8CB-ED8ED6391EDC.png";
-		file.renameTo(new File(url2));
 	}
 }

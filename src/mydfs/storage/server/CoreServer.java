@@ -5,6 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,24 +21,27 @@ public class CoreServer {
 			String basepath) {
 		System.out.println("access url:" + url);
 		// 有参数的url正则表达式
+		FileToolkit fileToolkit=new FileToolkit();
 		url = FileToolkit.removeHost(url);
 		File file = null;
+		OutputStream outputStream=null;
+		InputStream inputStream=null;
 		try {
-			OutputStream outputStream = socket.getOutputStream();
+			 outputStream = socket.getOutputStream();
 			// 客户端根据参数获取对应的缩略图片
 			if (url.matches("/[A-Z0-9]{2}/[A-Z0-9]{2}/[A-Za-z0-9-]+\\.[a-zA-Z]+(\\?w=[0-9]+&h=[0-9]+){1}")) {
 				String storepath_parameter = basepath + url;
 				System.out.println("storepath:" + storepath_parameter);
 				String heigth = FileToolkit.getHeigth(storepath_parameter);
 				String width = FileToolkit.getWidth(storepath_parameter);
-				// 获取缩略图路径
+				// 获取缩略图在硬盘的路径
 				String thumbnailPath = FileToolkit.thumbnailPath(
 						storepath_parameter, width, heigth);
 				// 判断该文件是否可以被压缩(只有图片可以被压缩生成缩略图)
 				if (FileToolkit.isCanThumbnail(thumbnailPath)) {
 					// 如果这个缩略图不是图片格式
 					file = new File(thumbnailPath);
-					// 如果没有缩率图文件,
+					// 如果没有改缩略图文件,生成一张缩略图
 					if (!file.exists()) {
 						String storepath = storepath_parameter.replaceAll("\\?w=[0-9]+&h=[0-9]+", "");
 						file = new File(storepath);
@@ -49,27 +53,46 @@ public class CoreServer {
 									Integer.valueOf(heigth),
 									FileToolkit.getExtensionName(storepath));
 							file = new File(thumbnailPath);
+							inputStream=new FileInputStream(file);
 							System.out.println("thumbnailPath:" + thumbnailPath);
 							// 文件不存在返回默认的图片
 						} else {
-							file = FileToolkit.diggingFile(basepath+ "the-file-is-not-exist.jpg");
+							inputStream = fileToolkit.diggingFile(basepath+ "the-file-is-not-exist.jpg");
 						}
+					// 改缩略图文件存在,返回该缩略图
+					}else {
+						inputStream = fileToolkit.diggingFile(thumbnailPath);
 					}
 				} else {
-					file = FileToolkit.diggingFile(basepath+ "the-file-is-not-exist.jpg");
+					inputStream = fileToolkit.diggingFile(basepath+ "the-file-is-not-exist.jpg");
 				}
 				// 客户端获取原图
 			} else if (url.matches("/[A-Z0-9]{2}/[A-Z0-9]{2}/[A-Za-z0-9-]+\\.[a-zA-Z]+")) {
 				String storepath = basepath + url;
 				System.out.println("storepath:" + storepath);
-				file = FileToolkit.diggingFile(storepath);
+				inputStream = fileToolkit.diggingFile(storepath);
 				// 如果所有正则都不匹配返回一张默认的图片
 			} else {
-				file = FileToolkit.diggingFile(basepath+ "the-file-is-not-exist.jpg");
+				inputStream = fileToolkit.diggingFile(basepath+ "the-file-is-not-exist.jpg");
 			}
-			FileToolkit.flushImage(url, outputStream, file);
+			FileToolkit.flushImage(url, outputStream, inputStream);
 		} catch (Exception e) {
 			e.printStackTrace();
+			if(outputStream!=null){
+				try {
+					outputStream.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+			if(socket!=null&&socket.isConnected()){
+				try {
+					socket.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+			System.out.println("current exception cause socket close:");
 		}
 	}
 	public static void clientUpload(final Socket socket,InputStream inputStream, DataInputStream datais,String extension,String basepath,String pathPrefix){

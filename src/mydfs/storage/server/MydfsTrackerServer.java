@@ -20,20 +20,11 @@ import java.net.Socket;
  *           故自己写了一个文件管理系统，管理上传的文件
  * */
 public class MydfsTrackerServer {
-	private MydfsStorageServer mydfsStorageServer;
 	private String host;
 	private int port;
 
 	public String getHost() {
 		return host;
-	}
-
-	public MydfsStorageServer getMydfsStorageServer() {
-		return mydfsStorageServer;
-	}
-
-	public void setMydfsStorageServer(MydfsStorageServer mydfsStorageServer) {
-		this.mydfsStorageServer = mydfsStorageServer;
 	}
 
 	public MydfsTrackerServer() {

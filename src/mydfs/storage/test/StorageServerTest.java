@@ -11,14 +11,14 @@ import mydfs.storage.server.MydfsTrackerServer;
 public class StorageServerTest {
 	
 	//使用main方法，可以将服务一直开启 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 			MydfsStorageServer storageServer=new MydfsStorageServer(9999,"D:/data/mydfs/store",4,"127.0.0.1");
 			storageServer.startServer();
 	}
 	
 	// 如果使用单元测试会将开启后的服务关闭
 	@Test
-	public  void startUp() throws IOException{
+	public  void startUp() throws Exception{
 		MydfsStorageServer storageServer=new MydfsStorageServer(9999,"D:/data/mydfs/store",4,"127.0.0.1");
 		storageServer.startServer();
 	}
@@ -26,7 +26,7 @@ public class StorageServerTest {
 	@Test
 	public  void upload() throws IOException{
 		MydfsTrackerServer client=new MydfsTrackerServer("localhost", 9999);
-		InputStream inputStream = new FileInputStream("D:/test.jpg");
+		InputStream inputStream = new FileInputStream("D:/20130412062742872.jpg");
 		String storepath = client.upload(inputStream,"jpg");
 		System.out.println(storepath);
 	}
