@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project  xmlns:fx="javafx:com.sun.javafx.tools.ant" xmlns:artifact="urn:maven-artifact-ant">
+	<property environment="SystemVariable"/>
 	<property name="build.classes.dir" value="build-classes"/>
 	<property name="src.main.java" value="src/mydfs/storage/server/"/>
 	<!--Begin: Name:wuqiwei Date:2013-09-07 AddReason:编译-->
@@ -11,7 +12,7 @@
 		<javac destdir="${build.classes.dir}" srcdir="${src.main.java}" includeantruntime="true" encoding="UTF-8">
 			<classpath>
 				<!-- 项目在编译之后不会存在javaEE的jar包，使用这个tomcat/lib 下的只是负责编译通过而已而在部署到tomcat之后，tomcat存在这些包，所以项目能运行-->
-				<fileset dir="D:/usr/local/apache-tomcat-6.0.41/lib" includes="*.jar" />
+				<fileset dir="E:/usr/local/apache-tomcat-6.0.41/lib" includes="*.jar" />
 			</classpath>
 		</javac>
 		<!--End:第一步:只编译.java的文件-->

@@ -1,5 +1,6 @@
-在spring配置文件中配置,该服务会随着tomcat加载web应用启动而启动,随着tomcat的关闭而关闭
- <?xml version="1.0" encoding="UTF-8"?>
+方式一：整合spring在web环境中
+第一步： 在spring配置文件中配置,该服务会随着tomcat加载web应用启动而启动,随着tomcat的关闭而关闭
+<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:aop="http://www.springframework.org/schema/aop"
@@ -11,11 +12,15 @@
 		<property name="host" value="127.0.0.1"/>
 		<property name="port" value="9999"/>
 		<property name="workers" value="10"/>
-		<property name="basepath" value="D:/data/mydfs/store"/>
+		<property name="basepath" value="E:/data/mydfs/store"/>
+	</bean>
+	<bean id="mydfsTrackerServer" class="mydfs.storage.server.MydfsTrackerServer" scope="prototype">
+		<property name="host" value="127.0.0.1"/>
+		<property name="port" value="9999"/>
 	</bean>
 </beans>
  
-在web.xml中配置
+第二步：在web.xml中配置
 	<!-- Begin Author:wuqiwei:Data:2014-06-05 AddReason:内嵌式小型分布式文件系统集成 -->
 	 <servlet>
 		<servlet-name>storageClient</servlet-name>
@@ -32,6 +37,13 @@
 	</servlet-mapping>
 	<!-- End Author:wuqiwei:Data:2014-06-05 AddReason:内嵌式小型分布式文件系统集成 -->
 
+第三步：编写java代码
+  // 第一个参数：inputStream 上传的文件流  第二个参数：extention：文件的后缀名
+  String storepath= mydfsTrackerServer.upload(inputStream, extention);
+
+
+
+方式二：硬编码
 如果不是在spring的web的环境中,在代码中使用方式
  0.启动服务
            第一个参数:启动的端口号  第二个参数:图片存放地址  第三个参数:工作线程数  第四个参数:监听ip地址

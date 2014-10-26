@@ -109,7 +109,11 @@ public class FileToolkit {
 		if(!file.exists()){
 			 String packageName=this.getClass().getPackage().getName().replace(".", "/");
 			 // getResourceAsStream方法比getResource好,getResourceAsStream把压缩在jar包中的文件也当放到classpath中
-			 InputStream inputStream=this.getClass().getResourceAsStream("/"+packageName+"/404.jpg");
+			 String image="404.jpg";
+			 if(storepath.contains("the-file-is-not-support-thumbs.png")){
+				 image="unSupport.png";
+			 }
+			 InputStream inputStream=this.getClass().getResourceAsStream("/"+packageName+"/"+image);
 			 return inputStream;
 		}
 		return new FileInputStream(file);
@@ -126,8 +130,6 @@ public class FileToolkit {
 		}else if (extension.equalsIgnoreCase("png")) {
 			can=true;
 		}else if (extension.equalsIgnoreCase("jpeg")) {
-			can=true;
-		}else if (extension.equalsIgnoreCase("gif")) {
 			can=true;
 		}
 		return can;

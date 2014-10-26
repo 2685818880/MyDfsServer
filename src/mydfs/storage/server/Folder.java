@@ -14,7 +14,7 @@ public class Folder {
 		//创建失败
 		File file=new File(basepath);
 		if(!file.exists()&&!file.mkdirs())
-		  throw new RuntimeException("folder create error.do you hava authority create folder ?");
+		  throw new RuntimeException("folder create error.do you hava authority create folder or your directory write error ?");
 		//创建子文件夹
 		try{
 			createSubFolder(file);

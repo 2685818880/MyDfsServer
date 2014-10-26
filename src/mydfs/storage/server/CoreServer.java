@@ -64,7 +64,7 @@ public class CoreServer {
 						inputStream = fileToolkit.diggingFile(thumbnailPath);
 					}
 				} else {
-					inputStream = fileToolkit.diggingFile(basepath+ "the-file-is-not-exist.jpg");
+					inputStream = fileToolkit.diggingFile(basepath+ "the-file-is-not-support-thumbs.png");
 				}
 				// 客户端获取原图
 			} else if (url.matches("/[A-Z0-9]{2}/[A-Z0-9]{2}/[A-Za-z0-9-]+\\.[a-zA-Z]+")) {

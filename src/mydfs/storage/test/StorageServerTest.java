@@ -12,7 +12,7 @@ public class StorageServerTest {
 	
 	//使用main方法，可以将服务一直开启 
 	public static void main(String[] args) throws Exception {
-			MydfsStorageServer storageServer=new MydfsStorageServer(9999,"D:/data/mydfs/store",4,"127.0.0.1");
+			MydfsStorageServer storageServer=new MydfsStorageServer(9999,"E:/data/mydfs/store",4,"127.0.0.1");
 			storageServer.startServer();
 	}
 	
@@ -26,8 +26,8 @@ public class StorageServerTest {
 	@Test
 	public  void upload() throws IOException{
 		MydfsTrackerServer client=new MydfsTrackerServer("localhost", 9999);
-		InputStream inputStream = new FileInputStream("D:/20130412062742872.jpg");
-		String storepath = client.upload(inputStream,"jpg");
+		InputStream inputStream = new FileInputStream("E:/fzlc_03.gif");
+		String storepath = client.upload(inputStream,"git");
 		System.out.println(storepath);
 	}
 	@Test
@@ -40,7 +40,7 @@ public class StorageServerTest {
 	@Test
 	public  void receiveDataTest() throws Exception {
 		MydfsTrackerServer client=new MydfsTrackerServer("127.0.0.1", 9999);
-		String url="http://www.jobs.com/group/M00/9A/6F/8C66-C63F-4296-BDCC-AAF0BF1343E7.flv?w=100&h=100";
+		String url="http://localhost:8080/group/M00/B3/89/C6B1-D7D0-4A38-927D-647403C3F23B.gif?w=200&h=100";
 		InputStream inputStream = client.receiveData(url);
 		int data=0;
 		while((data=inputStream.read())!=-1){
