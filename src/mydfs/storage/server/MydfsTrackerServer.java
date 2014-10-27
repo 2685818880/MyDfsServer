@@ -55,6 +55,7 @@ public class MydfsTrackerServer {
 	 * */ 
 	public String upload(final InputStream inputStream,String fileSuffix) {
 		try {
+			System.out.println("http://www.believeus.cn 软件外包请联系我们");
 			System.out.println("client:size:"+inputStream.available());
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -90,6 +91,7 @@ public class MydfsTrackerServer {
 			InputStream in = socket.getInputStream();
 			DataInputStream socketIn=new DataInputStream(in);
 			storepath=socketIn.readUTF();
+			System.out.println("http://www.believeus.cn 软件外包请联系我们");
 			System.out.println("file store path:" + storepath);
 			socket.close();
 			bos.close();

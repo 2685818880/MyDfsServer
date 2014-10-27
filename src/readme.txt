@@ -42,8 +42,16 @@
   String storepath= mydfsTrackerServer.upload(inputStream, extention);
 
 
-
-方式二：硬编码
+方式二：作为单独服务启动
+  第一步： ant jar 执行之后会生成一个可执行的mydfsServer.jar文件
+  第二步：java -jar mydfsServer.jar
+       mydfsServer.jar 文件中有mydfs.properties文件，里面有ip和端口相关配置可以进行配置
+                 默认端口9999 host默认127.0.0.1 线程数worker默认是5 基路径basepath默认：E:/data/mydfs/store/
+  第三步：编写客户端代码将mydfsServer.jar放入客户端的的环境变量中
+    MydfsTrackerServer client=new MydfsTrackerServer("127.0.0.1", 9999);
+  
+  
+方式三：硬编码
 如果不是在spring的web的环境中,在代码中使用方式
  0.启动服务
            第一个参数:启动的端口号  第二个参数:图片存放地址  第三个参数:工作线程数  第四个参数:监听ip地址

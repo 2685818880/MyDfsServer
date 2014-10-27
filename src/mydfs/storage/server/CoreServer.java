@@ -69,6 +69,7 @@ public class CoreServer {
 				// 客户端获取原图
 			} else if (url.matches("/[A-Z0-9]{2}/[A-Z0-9]{2}/[A-Za-z0-9-]+\\.[a-zA-Z]+")) {
 				String storepath = basepath + url;
+				System.out.println("http://www.believeus.cn 软件外包请联系我们");
 				System.out.println("storepath:" + storepath);
 				inputStream = fileToolkit.diggingFile(storepath);
 				// 如果所有正则都不匹配返回一张默认的图片
@@ -132,6 +133,7 @@ public class CoreServer {
 			// 文件重命名需把该文件有关的流关闭
 			file.renameTo(new File(storepath));
 			storepath = storepath.replaceAll(basepath, pathPrefix);
+			System.out.println("http://www.believeus.cn 软件外包请联系我们");
 			System.out.println("access path:" + storepath);
 			dataOutputStream = new DataOutputStream(socket.getOutputStream());
 			dataOutputStream.writeUTF(storepath);
@@ -170,6 +172,7 @@ public class CoreServer {
 			Matcher matcher = regex.matcher(url);
 			if (matcher.find()) {
 				String storepath = basepath + matcher.group();
+				System.out.println("http://www.believeus.cn 软件外包请联系我们");
 				System.out.println("file disk store path:" + storepath);
 				File file = new File(storepath);
 				if (file.exists())

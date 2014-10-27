@@ -15,13 +15,22 @@
 				<fileset dir="E:/usr/local/apache-tomcat-6.0.41/lib" includes="*.jar" />
 			</classpath>
 		</javac>
+		<javac destdir="${build.classes.dir}" srcdir="src/mydfs/storage/main" includeantruntime="true" encoding="UTF-8"/>
 		<!--End:第一步:只编译.java的文件-->
 		<copy todir="${build.classes.dir}/mydfs/storage/server/">
 		  <fileset file="${src.main.java}/*.jpg" />
 		</copy>
+		<copy todir="${build.classes.dir}">
+		   <fileset file="src/mydfs.properties" />
+		   <fileset file="src/readme.txt" />
+		</copy>
 	</target>
-	<target name="jar">
+	<target name="jar" depends="compile">
 		<delete file="mydfsServer.jar"/>
-		<jar destfile="mydfsServer.jar" basedir="${build.classes.dir}"/>
+		<jar destfile="mydfsServer.jar" basedir="${build.classes.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="mydfs.storage.main.Main"/>  
+			</manifest>
+		</jar>
 	</target>
 </project>
