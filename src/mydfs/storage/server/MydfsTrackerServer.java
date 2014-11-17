@@ -93,6 +93,7 @@ public class MydfsTrackerServer {
 			storepath=socketIn.readUTF();
 			System.out.println("http://www.believeus.cn 软件外包请联系我们");
 			System.out.println("file store path:" + storepath);
+			socketOut.writeUTF("client report:upload_over");
 			socket.close();
 			bos.close();
 			socketOut.close();

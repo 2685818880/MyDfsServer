@@ -138,10 +138,16 @@ public class CoreServer {
 			dataOutputStream = new DataOutputStream(socket.getOutputStream());
 			dataOutputStream.writeUTF(storepath);
 			dataOutputStream.flush();
+			// 读取客户端传递的数据，客户端上传完毕，从服务端关闭客户端sock
+			String uploadOver=datais.readUTF();
+			System.out.println(uploadOver);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
+				if(datais!=null){
+					datais.close();
+				}
 				if(dataOutputStream!=null){
 					dataOutputStream.close();
 				}
