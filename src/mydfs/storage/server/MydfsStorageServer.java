@@ -109,7 +109,6 @@ public class MydfsStorageServer {
 				while (true) {
 					if(stop){break;}
 					try {
-						System.out.println("http://www.believeus.cn 软件外包请联系我们");
 						System.out.println("start up time:"+currentTime+" Storage Server start!");
 						final Socket socket = serverSocket.accept();
 						//保存客户端上传的文件,并返回文件存储的路径给客户端

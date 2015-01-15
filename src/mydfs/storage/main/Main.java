@@ -2,6 +2,8 @@ package mydfs.storage.main;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 import mydfs.storage.server.MydfsStorageServer;
@@ -21,8 +23,11 @@ public class Main {
 		String worker=(String) properties.get("worker");
 		String basepath=(String) properties.get("basepath");
 		MydfsStorageServer storageServer=new MydfsStorageServer(Integer.parseInt(port),basepath,Integer.parseInt(worker),host);
-		System.out.println("http://www.believeus.cn 软件外包请联系我们");
-		System.out.println("mydfsStoreServer start up host:"+host+" port:"+port+" worker number:"+worker+" basepath:"+basepath);
+		System.err.println("http://www.believeus.cn 研发文件上传管理系统");
+		System.out.println("Listen the host:"+host);
+		System.out.println("Listen the port:"+port);
+		System.out.println("mydfsServer worker number:"+worker);
+		System.out.println("the mydfsserver basepath:"+ basepath);
 		try {
 			storageServer.startServer();
 		} catch (IOException e) {
