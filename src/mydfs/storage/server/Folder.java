@@ -1,6 +1,12 @@
 package mydfs.storage.server;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
 
 public class Folder {
 	private static String[] varchar={
@@ -22,6 +28,18 @@ public class Folder {
 			for (int i = 0; i < subFolders.length; i++) {
 				createSubFolder(subFolders[i]);
 			}
+			//创建统计文件
+			File statisticsFile=new File(basepath+"/statistics.txt");
+			statisticsFile.createNewFile();
+			Properties properties=new Properties();
+			properties.load(new FileInputStream(statisticsFile));
+			String fileCount = properties.getProperty("fileCount");
+			OutputStream fos = new FileOutputStream(statisticsFile);
+			if (String.valueOf(fileCount).equals("null")) {
+				properties.setProperty("fileCount", "0");
+				properties.store(fos, "statistics file count");
+			}
+			properties.clone();
 			System.out.println("Success:all folder create success");
 		}catch(Exception ex){
 			System.out.println("Error:folder create error.error message:"+ex.getMessage());
