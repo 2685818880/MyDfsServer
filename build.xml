@@ -1,23 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project  xmlns:fx="javafx:com.sun.javafx.tools.ant" xmlns:artifact="urn:maven-artifact-ant">
+<project  xmlns:fx="javafx:com.sun.javafx.tools.ant" xmlns:artifact="urn:maven-artifact-ant" basedir=".">
 	<property environment="SystemVariable"/>
+	<property name="lib.dir" value="lib"/>
 	<property name="build.classes.dir" value="MyDfsServer"/>
 	<property name="src.main.java" value="src/mydfs/storage/server/"/>
 	<property name="mydfsServer.jar" value="mydfsServer.jar"/>
+	
+	<pathconvert property="mf.classpath" pathsep=" ">
+	    <mapper>
+	        <chainedmapper>
+	            <!-- jar包文件只留文件名，去掉目录信息 -->
+	            <flattenmapper/>
+	            <!-- add lib/ prefix -->
+	            <globmapper from="*" to="lib/*"/>
+	        </chainedmapper>
+	    </mapper>
+		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+ 	</pathconvert>
+
+
 	<!--Begin: Name:wuqiwei Date:2013-09-07 AddReason:编译-->
 	<target name="compile">
 		<delete dir="${build.classes.dir}"/>
 		<!--将maven项目中依赖的jar包copy到指定目录-->
 		<mkdir dir="${build.classes.dir}" />
+		
 		<!--Begin:第一步:只编译.java的文件-->
 		<javac destdir="${build.classes.dir}" srcdir="${src.main.java}" includeantruntime="true" encoding="UTF-8">
 			<classpath>
 				<!-- 项目在编译之后不会存在javaEE的jar包，使用这个tomcat/lib 下的只是负责编译通过而已而在部署到tomcat之后，tomcat存在这些包，所以项目能运行-->
 				<fileset dir="${SystemVariable.CATALINA_HOME}/lib" includes="*.jar" />
 			</classpath>
+           
 		</javac>
-		<javac destdir="${build.classes.dir}" srcdir="src/mydfs/storage/main" includeantruntime="true" encoding="UTF-8"/>
+		
+		<javac destdir="${build.classes.dir}" srcdir="src/mydfs/storage/main" includeantruntime="true" encoding="UTF-8">
+			<classpath>
+				<fileset dir="${lib.dir}" includes="**/*.jar"/>
+			</classpath>
+		</javac>
 		<!--End:第一步:只编译.java的文件-->
+		
 		<copy todir="${build.classes.dir}/mydfs/storage/server/">
 		  <fileset file="${src.main.java}/*.jpg" />
 		</copy>
@@ -25,14 +48,20 @@
 		   <fileset file="src/mydfs.properties" />
 		   <fileset file="src/readme.txt" />
 		   <fileset file="src/startup.bat" />
-			 <fileset file="src/startup.sh" />
+		   <fileset file="src/startup.sh" />
+		</copy>
+		<copy todir="${build.classes.dir}/lib">
+			 <fileset file="${lib.dir}/*.jar"/>
 		</copy>
 	</target>
+	
+	
 	<target name="jar" depends="compile">
 		<delete file="${mydfsServer.jar}"/>
 		<jar destfile="${mydfsServer.jar}" basedir="${build.classes.dir}">
 			<manifest>
 				<attribute name="Main-Class" value="mydfs.storage.main.Main"/>  
+				<attribute name="Class-Path" value="${mf.classpath}"/>
 			</manifest>
 		</jar>
 		<move file="${mydfsServer.jar}" todir="${build.classes.dir}"/>
