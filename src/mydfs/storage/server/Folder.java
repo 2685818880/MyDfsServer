@@ -15,6 +15,7 @@ public class Folder {
 				"A","B","C","D","E","F"};
 	public static String basepath;
 	
+	/*因为linux有权限，担心在程序运行的过程中创建不了文件夹，所以就在启动的时候创建了。*/
 	public static void initFolder(String basepath){
 		Folder.basepath=basepath;
 		//创建失败
