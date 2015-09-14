@@ -19,18 +19,17 @@ import mydfs.storage.server.MydfsStorageServer;
 import mydfs.storage.server.MydfsTrackerServer;
 
 public class Main {
-	// host port worker basepath
 	public static void main(String[] args) {
 		try{
 			InputStream stream = Main.class.getClassLoader().getResourceAsStream("mydfs.properties");
-			Properties properties = new Properties();
+			final Properties properties = new Properties();
 			properties.load(stream);
 			final String host = (String) properties.get("mydfs.host");
 			final String port = (String) properties.get("mydfs.port");
 			final String worker = (String) properties.get("mydfs.worker");
 			final String basepath = (String) properties.get("mydfs.basepath");
 			final String httpPort = (String) properties.get("mydfs.http.port");
-			
+			//使用jetty做http服务器,显示一些统计信息
 			Server httpserver=new Server(Integer.parseInt(httpPort));
 			if(!httpserver.isRunning()){
 				httpserver.setHandler(new AbstractHandler() {
@@ -41,16 +40,21 @@ public class Main {
 						ServletOutputStream out = httpResponse.getOutputStream();
 						PrintWriter writer=new PrintWriter(out,true);
 						String httpQueryArgs=httpRequest.getQueryString();
+						MydfsTrackerServer storageTracker=new MydfsTrackerServer(host, Integer.parseInt(port));
 						if(!String.valueOf(httpQueryArgs).equals("null")){
 							String url=httpRequest.getRequestURL().toString();
-							MydfsTrackerServer storageTracker=new MydfsTrackerServer(host, Integer.parseInt(port));
 							MydfsClient.fushImage(url, httpQueryArgs, out, storageTracker);
 						}
-						
+						storageTracker=new MydfsTrackerServer(host, Integer.parseInt(port));
+						InputStream inputStream = storageTracker.receiveData("statistics");
+						properties.load(inputStream);
+						String fileCount=(String)properties.get("fileCount");
 						writer.println("mydfsServer listen port:"+port);
 						writer.println("mydfsServer thread woker:"+worker);
 						writer.println("mydfsserver basebase:"+basepath);
+						writer.println("mydfsserver file count:"+fileCount);
 						writer.close();
+						inputStream.close();
 					}
 				});
 			}

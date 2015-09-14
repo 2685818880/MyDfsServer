@@ -2,9 +2,9 @@ package mydfs.storage.server;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
@@ -28,23 +28,31 @@ public class Folder {
 			for (int i = 0; i < subFolders.length; i++) {
 				createSubFolder(subFolders[i]);
 			}
-			//创建统计文件
-			File statisticsFile=new File(basepath+"/statistics.txt");
-			statisticsFile.createNewFile();
-			Properties properties=new Properties();
-			properties.load(new FileInputStream(statisticsFile));
-			String fileCount = properties.getProperty("fileCount");
-			OutputStream fos = new FileOutputStream(statisticsFile);
-			if (String.valueOf(fileCount).equals("null")) {
-				properties.setProperty("fileCount", "0");
-				properties.store(fos, "statistics file count");
-			}
-			properties.clone();
+			//创建统计文件,用来统计文件个数等
+			createStatisticFile(basepath);
 			System.out.println("Success:all folder create success");
 		}catch(Exception ex){
 			System.out.println("Error:folder create error.error message:"+ex.getMessage());
 		}
 	}
+
+	/**Begin wuqiwei 2015-9-14  创建统计文件*/
+	private static void createStatisticFile(String basepath)
+			throws IOException, FileNotFoundException {
+		File statisticsFile=new File(basepath+"/statistics");
+		statisticsFile.createNewFile();
+		Properties properties=new Properties();
+		FileInputStream inputStream = new FileInputStream(statisticsFile);
+		properties.load(inputStream);
+		String fileCount = properties.getProperty("fileCount");
+		OutputStream fos = new FileOutputStream(statisticsFile);
+		if (String.valueOf(fileCount).equals("null")) {
+			properties.setProperty("fileCount", "0");
+			properties.store(fos, "statistics file count");
+		}
+		inputStream.close();
+	}
+	/**End wuqiwei 2015-9-14 创建统计文件*/
 	
 	//创建子文件夹
 	private static void createSubFolder(File file) {

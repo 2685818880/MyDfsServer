@@ -15,17 +15,14 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CoreServer {
+public class SocketCoreServer implements ICore {
 	// 将数据输出到客户端
-	public static void sendToClient(final Socket socket, String url,
+	public  void sendToClient(final Socket socket, String url,
 			String basepath) {
 		System.out.println("access url:" + url);
 		// 有参数的url正则表达式
 		FileToolkit fileToolkit=new FileToolkit();
-		//如果不是获取统计文件
-		if(!url.equals("statistics")){
-			url = FileToolkit.removeHost(url);
-		}
+		url = FileToolkit.removeHost(url);
 		File file = null;
 		OutputStream outputStream=null;
 		InputStream inputStream=null;
@@ -62,7 +59,7 @@ public class CoreServer {
 						} else {
 							inputStream = fileToolkit.diggingFile(basepath+ "the-file-is-not-exist.jpg");
 						}
-					// 该缩略图文件存在,返回该缩略图
+					// 改缩略图文件存在,返回该缩略图
 					}else {
 						inputStream = fileToolkit.diggingFile(thumbnailPath);
 					}
@@ -74,10 +71,7 @@ public class CoreServer {
 				String storepath = basepath + url;
 				System.out.println("storepath:" + storepath);
 				inputStream = fileToolkit.diggingFile(storepath);
-			//获取统计文件
-			}else if (url.contains("statistics")) {
-				inputStream = fileToolkit.diggingFile(basepath+ "/statistics");
-			// 如果所有正则都不匹配返回一张默认的图片
+				// 如果所有正则都不匹配返回一张默认的图片
 			} else {
 				inputStream = fileToolkit.diggingFile(basepath+ "the-file-is-not-exist.jpg");
 			}
@@ -101,7 +95,7 @@ public class CoreServer {
 			System.out.println("current exception cause socket close:");
 		}
 	}
-	public static void clientUpload(final Socket socket,InputStream inputStream, DataInputStream datais,String extension,String basepath,String pathPrefix){
+	public  void clientUpload(final Socket socket,InputStream inputStream, DataInputStream datais,String extension,String basepath,String pathPrefix){
 		System.out.println("client file stuffix: " + extension);
 		String uuid = UUID.randomUUID().toString().toUpperCase();
 		// 得到存储路径
@@ -142,12 +136,11 @@ public class CoreServer {
 			dataOutputStream = new DataOutputStream(socket.getOutputStream());
 			dataOutputStream.writeUTF(storepath);
 			dataOutputStream.flush();
-			//更新
-			int fileCount=Integer.parseInt(FileToolkit.getProperty(basepath+"/statistics", "fileCount"));
-			FileToolkit.setProperty(basepath+"/statistics", "fileCount", (++fileCount)+"", "statistics file count");
-			String uploadOver=datais.readUTF();
 			// 读取客户端传递的数据，客户端上传完毕，从服务端关闭客户端sock
+			String uploadOver=datais.readUTF();
 			System.out.println(uploadOver);
+			//将上传的文件个数加一
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -218,5 +211,15 @@ public class CoreServer {
 				}
 			}
 		}
+	}
+	@Override
+	public void sendToClient() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void clientUpload() {
+		// TODO Auto-generated method stub
+		
 	}
 }

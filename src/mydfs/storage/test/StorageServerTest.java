@@ -1,16 +1,17 @@
 package mydfs.storage.test;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.Test;
+//import org.junit.Test;
 import mydfs.storage.server.MydfsStorageServer;
 import mydfs.storage.server.MydfsTrackerServer;
 
 
 public class StorageServerTest {
 	
-	//使用main方法，可以将服务一直开启 
+/*	//使用main方法，可以将服务一直开启 
 	public static void main(String[] args) throws Exception {
 			MydfsStorageServer storageServer=new MydfsStorageServer(9999,"E:/data/mydfs/store",4,"127.0.0.1");
 			storageServer.startServer();
@@ -24,9 +25,9 @@ public class StorageServerTest {
 	}
 	
 	@Test
-	public  void upload() throws IOException{
+	public  void upload() throws IOException{ 
 		MydfsTrackerServer client=new MydfsTrackerServer("localhost", 9999);
-		InputStream inputStream = new FileInputStream("E:/fzlc_03.gif");
+		InputStream inputStream = new FileInputStream("C:/Users/wuqiwei/Desktop/林梦凡图片/40.jpg");
 		String storepath = client.upload(inputStream,"git");
 		System.out.println(storepath);
 	}
@@ -46,6 +47,11 @@ public class StorageServerTest {
 		while((data=inputStream.read())!=-1){
 			System.out.print(data);
 		}
+	}*/
+	public static void main(String[] args) throws Exception {
+			MydfsTrackerServer client=new MydfsTrackerServer("localhost", 9999);
+			InputStream inputStream = new FileInputStream("C:/Users/wuqiwei/Desktop/林梦凡图片/40.jpg");
+			String storepath = client.upload(inputStream,"jpg");
+			System.out.println(storepath);
 	}
-	
 }
