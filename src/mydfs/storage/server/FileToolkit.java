@@ -1,7 +1,6 @@
 package mydfs.storage.server;
 
 import java.io.*;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 /**
@@ -138,34 +137,5 @@ public class FileToolkit {
 		return url.substring(url.lastIndexOf("/")-6);
 	}
 	
-	//设置属性
-	public static void setProperty(String filepath,String key ,String value,String comment){
-		try {
-			File statisticsFile=new File(filepath);
-			FileInputStream inputStream=new FileInputStream(statisticsFile);
-			Properties properties=new Properties();
-			properties.load(inputStream);
-			properties.setProperty(key,value);
-			properties.store(new FileOutputStream(filepath),comment);
-			inputStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	//获取属性值
-	public static String getProperty(String filepath,String key){
-		String value="";
-		try {
-			File statisticsFile=new File(filepath);
-			FileInputStream inputStream;
-			inputStream = new FileInputStream(statisticsFile);
-			Properties properties=new Properties();
-			properties.load(inputStream);
-			value=(String)properties.get(key);
-			inputStream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return value;
-	}
+	
 }

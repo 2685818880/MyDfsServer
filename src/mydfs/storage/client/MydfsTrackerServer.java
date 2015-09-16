@@ -1,4 +1,4 @@
-package mydfs.storage.server;
+package mydfs.storage.client;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

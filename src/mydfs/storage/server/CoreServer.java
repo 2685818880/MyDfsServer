@@ -15,6 +15,8 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import mydfs.storage.utills.PropertiesUtil;
+
 public class CoreServer {
 	// 将数据输出到客户端
 	public static void sendToClient(final Socket socket, String url,
@@ -143,8 +145,9 @@ public class CoreServer {
 			dataOutputStream.writeUTF(storepath);
 			dataOutputStream.flush();
 			//更新
-			int fileCount=Integer.parseInt(FileToolkit.getProperty(basepath+"/statistics", "fileCount"));
-			FileToolkit.setProperty(basepath+"/statistics", "fileCount", (++fileCount)+"", "statistics file count");
+			String path=basepath+"/statistics";
+			int fileCount=Integer.parseInt(PropertiesUtil.getValue("fileCount",path));
+			PropertiesUtil.setValue("fileCount", (++fileCount)+"",path, "statistics file count");
 			String uploadOver=datais.readUTF();
 			// 读取客户端传递的数据，客户端上传完毕，从服务端关闭客户端sock
 			System.out.println(uploadOver);

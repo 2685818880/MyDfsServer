@@ -3,7 +3,8 @@
 	<property environment="SystemVariable"/>
 	<property name="lib.dir" value="lib"/>
 	<property name="build.classes.dir" value="MyDfsServer"/>
-	<property name="src.main.java" value="src/mydfs/storage/server/"/>
+	<property name="src.main.java" value="src/"/>
+	<property name="mydfsClient.jar" value="mydfsClient.jar"/>
 	<property name="mydfsServer.jar" value="mydfsServer.jar"/>
 	
 	<pathconvert property="mf.classpath" pathsep=" ">
@@ -30,15 +31,16 @@
 			<classpath>
 				<!-- 项目在编译之后不会存在javaEE的jar包，使用这个tomcat/lib 下的只是负责编译通过而已而在部署到tomcat之后，tomcat存在这些包，所以项目能运行-->
 				<fileset dir="${SystemVariable.CATALINA_HOME}/lib" includes="*.jar" />
+				<fileset dir="${lib.dir}" includes="**/*.jar"/>
 			</classpath>
            
 		</javac>
 		
-		<javac destdir="${build.classes.dir}" srcdir="src/mydfs/storage/main" includeantruntime="true" encoding="UTF-8">
+		<!--<javac destdir="${build.classes.dir}" srcdir="src/mydfs/storage/main" includeantruntime="true" encoding="UTF-8">
 			<classpath>
 				<fileset dir="${lib.dir}" includes="**/*.jar"/>
 			</classpath>
-		</javac>
+		</javac> -->
 		<!--End:第一步:只编译.java的文件-->
 		
 		<copy todir="${build.classes.dir}/mydfs/storage/server/">
@@ -57,13 +59,15 @@
 	
 	
 	<target name="jar" depends="compile">
+		<delete file="${mydfsClient.jar}"/>
 		<delete file="${mydfsServer.jar}"/>
-		<jar destfile="${mydfsServer.jar}" basedir="${build.classes.dir}">
+		<jar destfile="${mydfsServer.jar}" basedir="${build.classes.dir}" excludes = "**/mydfs.properties,**/readme.txt,**/startup.bat,**/startup.sh" >
 			<manifest>
 				<attribute name="Main-Class" value="mydfs.storage.main.Main"/>  
 				<attribute name="Class-Path" value="${mf.classpath}"/>
 			</manifest>
 		</jar>
 		<move file="${mydfsServer.jar}" todir="${build.classes.dir}"/>
+		<delete dir="${build.classes.dir}/mydfs"/>
 	</target>
 </project>

@@ -1,12 +1,7 @@
 package mydfs.storage.server;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Properties;
+import mydfs.storage.utills.PropertiesUtil;
 
 public class Folder {
 	private static String[] varchar={
@@ -38,20 +33,12 @@ public class Folder {
 	}
 
 	/**Begin wuqiwei 2015-9-14  创建统计文件*/
-	private static void createStatisticFile(String basepath)
-			throws IOException, FileNotFoundException {
-		File statisticsFile=new File(basepath+"/statistics");
-		statisticsFile.createNewFile();
-		Properties properties=new Properties();
-		FileInputStream inputStream = new FileInputStream(statisticsFile);
-		properties.load(inputStream);
-		String fileCount = properties.getProperty("fileCount");
-		OutputStream fos = new FileOutputStream(statisticsFile);
+	private static void createStatisticFile(String basepath){
+		String filename="logs/statistics";
+		String fileCount=PropertiesUtil.getValue("fileCount",filename);
 		if (String.valueOf(fileCount).equals("null")) {
-			properties.setProperty("fileCount", "0");
-			properties.store(fos, "statistics file count");
+			PropertiesUtil.setValue("fileCount","0", filename,"statistics file count");
 		}
-		inputStream.close();
 	}
 	/**End wuqiwei 2015-9-14 创建统计文件*/
 	
