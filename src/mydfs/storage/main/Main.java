@@ -11,14 +11,13 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import mydfs.storage.server.MydfsStorageServer;
-import mydfs.storage.utills.PropertiesUtil;
+import mydfs.storage.utils.PropertiesUtil;
 
 public class Main {
 	public static void main(String[] args) {
 		try{
 			String filename="mydfs.properties";
 			createProfile(filename);
-			//泛型的静态方法调用方式,你们没见过吧！哈哈
 			final String host=PropertiesUtil.getValue("mydfs.host",filename);
 			final Integer port=Integer.parseInt(PropertiesUtil.getValue("mydfs.port",filename));
 			final Integer worker =Integer.parseInt(PropertiesUtil.getValue("mydfs.worker",filename));
@@ -37,11 +36,12 @@ public class Main {
 							HttpServletResponse httpResponse) throws IOException, ServletException {
 						ServletOutputStream out = httpResponse.getOutputStream();
 						PrintWriter writer=new PrintWriter(out,true);
-						//String fileCount=PropertiesUtil.<String>getValue("fileCount", in);
+						//获取文件上传的个数
+						final String fileCount=PropertiesUtil.getValue("fileCount", "statistics");
 						writer.println("mydfsServer listen port:"+port);
 						writer.println("mydfsServer thread woker:"+worker);
 						writer.println("mydfsserver basebase:"+basepath);
-						//writer.println("mydfsserver file count:"+fileCount);
+						writer.println("mydfsserver file count:"+fileCount);
 						writer.close();
 					}
 				});
@@ -58,6 +58,7 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
+	//启动的时候就在jar包之外创建配置文件,如果没有该配置文件就创建
 	private static void createProfile(String filename){
 		File file=new File(filename);
 		if(!file.exists()){
@@ -66,7 +67,7 @@ public class Main {
 				PropertiesUtil.setValue("mydfs.host","localhost", filename, "");
 				PropertiesUtil.setValue("mydfs.port","9999", filename, "");
 				PropertiesUtil.setValue("mydfs.worker","5", filename, "");
-				PropertiesUtil.setValue("mydfs.basepath","data/mydfs/store", filename, "");
+				PropertiesUtil.setValue("mydfs.basepath","C:/data/mydfs/store", filename, "");
 				PropertiesUtil.setValue("mydfs.http.port","5555", filename, "");
 			} catch (IOException e) {
 				e.printStackTrace();

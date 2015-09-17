@@ -1,7 +1,8 @@
 package mydfs.storage.server;
 
 import java.io.File;
-import mydfs.storage.utills.PropertiesUtil;
+
+import mydfs.storage.utils.PropertiesUtil;
 
 public class Folder {
 	private static String[] varchar={
@@ -25,7 +26,7 @@ public class Folder {
 				createSubFolder(subFolders[i]);
 			}
 			//创建统计文件,用来统计文件个数等
-			createStatisticFile(basepath);
+			createStatisticFile("statistics");
 			System.out.println("Success:all folder create success");
 		}catch(Exception ex){
 			System.out.println("Error:folder create error.error message:"+ex.getMessage());
@@ -34,7 +35,7 @@ public class Folder {
 
 	/**Begin wuqiwei 2015-9-14  创建统计文件*/
 	private static void createStatisticFile(String basepath){
-		String filename="logs/statistics";
+		String filename="statistics";
 		String fileCount=PropertiesUtil.getValue("fileCount",filename);
 		if (String.valueOf(fileCount).equals("null")) {
 			PropertiesUtil.setValue("fileCount","0", filename,"statistics file count");

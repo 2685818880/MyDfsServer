@@ -61,13 +61,43 @@
 	<target name="jar" depends="compile">
 		<delete file="${mydfsClient.jar}"/>
 		<delete file="${mydfsServer.jar}"/>
-		<jar destfile="${mydfsServer.jar}" basedir="${build.classes.dir}" excludes = "**/mydfs.properties,**/readme.txt,**/startup.bat,**/startup.sh" >
+		<!--单独打服务端的jar包-->
+		<jar destfile="${mydfsServer.jar}" 
+			 basedir="${build.classes.dir}"  
+			 excludes = "**/mydfs.properties,
+			             **/readme.txt,
+			             **/startup.bat,
+			             **/startup.sh,
+			             **/*.jar,
+			             mydfs/storage/client/,
+			             mydfs/storage/test/,
+			             ${lib.dir}/" >
 			<manifest>
 				<attribute name="Main-Class" value="mydfs.storage.main.Main"/>  
 				<attribute name="Class-Path" value="${mf.classpath}"/>
 			</manifest>
 		</jar>
 		<move file="${mydfsServer.jar}" todir="${build.classes.dir}"/>
-		<delete dir="${build.classes.dir}/mydfs"/>
+		
+	   <!--单独打客户端的jar包-->
+	   <jar destfile="${mydfsClient.jar}" 
+	   	    basedir="${build.classes.dir}"  
+	   	    excludes = "**/mydfs.properties,
+	   					**/readme.txt,
+	   	                **/startup.bat,
+	   	                **/startup.sh,
+	   	                **/*.jar,
+	   	                mydfs/storage/server/,
+	   	                mydfs/storage/test/,
+	   	                mydfs/storage/main/,
+	   	                mydfs/storage/utils/,
+	   	                ${lib.dir}/">
+		  	<manifest>
+				<attribute name="Class-Path" value="${mf.classpath}"/>
+		  	</manifest>
+	   </jar>  
+	   <move file="${mydfsClient.jar}" todir="${build.classes.dir}" />
+		
+	 <delete dir="${build.classes.dir}/mydfs"/>
 	</target>
 </project>

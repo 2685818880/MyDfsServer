@@ -1,4 +1,4 @@
-package mydfs.storage.utills;
+package mydfs.storage.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
