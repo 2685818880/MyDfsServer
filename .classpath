@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/jetty-all-8.0.4.v20111024.jar"/>
+	<classpathentry kind="lib" path="lib/servlet-api-3.0.20100224.jar"/>
+	<classpathentry kind="lib" path="MyDfsServer/lib/jetty-all-8.0.4.v20111024.jar"/>
+	<classpathentry kind="lib" path="MyDfsServer/lib/servlet-api-3.0.20100224.jar"/>
+	<classpathentry kind="lib" path="MyDfsServer/mydfsServer.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

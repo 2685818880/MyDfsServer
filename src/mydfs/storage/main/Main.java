@@ -63,6 +63,7 @@ public class Main {
 		File file=new File(filename);
 		if(!file.exists()){
 			try {
+				
 				file.createNewFile();
 				PropertiesUtil.setValue("mydfs.host","localhost", filename, "");
 				PropertiesUtil.setValue("mydfs.port","9999", filename, "");
